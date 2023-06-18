@@ -46,7 +46,7 @@ class_names = ['n02086240-Shih-Tzu',
                'n02085936-Maltese_dog',]
 
 from PIL import Image,ImageDraw
-def predimage(path,y):
+def predimage(path):
     image = Image.open(path)
     test = load_img(path,target_size=(299,299))
     test = img_to_array(test)
@@ -58,11 +58,11 @@ def predimage(path,y):
     result = list(np.around(np.array(result),2))
     i = y_class[0]
     s = result[0][i]
-    plt.text(0, 0,y[y_class[0]],size=12,color='purple')
+    plt.text(0, 0,class_names[y_class[0]],size=12,color='purple')
     plt.text(0, 50,s,size=15,color='red')
     plt.imshow(image)
     print(result)
-    print(y[y_class[0]])
+    print(class_names[y_class[0]])
 
 
 #predimage('C:/Users/W10/Desktop/TEST2.jpg',class_names)
