@@ -6,7 +6,8 @@ from tensorflow.keras.preprocessing.image import img_to_array
 import matplotlib.pyplot as plt
 from ultralytics import YOLO
 import cv2
-from PIL import Image 
+from PIL import Image
+import decimal 
 
 import numpy as np
 import tempfile
@@ -38,7 +39,7 @@ def recognitionDog(registro):
             crop = img[r[1]:r[3], r[0]:r[2]]
             if i == 0:
                 _, buffer = cv2.imencode('.png', crop)
-                registro['imagen']=buffer
+                registro['imagen']=buffer.tobytes()
                 print("----------------------")
                 print("dog recognition finish")
                 print("----------------------")
@@ -61,7 +62,7 @@ def predimage(registro):
         class_name = class_names[class_idx]
         prob = top_probs[i]
         print(f"{class_name}: {prob:.2f}%")
-        razas[class_name] = round(prob, 2)
+        razas[class_name] = float(round(prob,2))
 
     registro['imagen_razas']=razas
     print("------------------------------")

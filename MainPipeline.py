@@ -8,7 +8,6 @@ from Steps.Step_TextClasification import DogStateClasification
 #Validar si hay descripci?n en el registro
 
 def processPerritos (registro):
-  
   if  registro['descripcion']== '':
     registro= ExtractTextFromImage(registro)
 
