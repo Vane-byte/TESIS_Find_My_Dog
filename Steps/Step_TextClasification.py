@@ -2,7 +2,7 @@ from transformers import BertTokenizer
 import tensorflow as tf
 
 #Clasificaciรณn de texto
-model_text_classy = tf.keras.models.load_model('D:\Mis documentos\Documents\CLASES\\tesiss\Codigo\ALL\Helpers\Modelos\lost_dogs_model2')
+model_text_classy = tf.keras.models.load_model('D:\Mis documentos\Documents\CLASES\\tesiss\Codigo\Main Code\Helpers\Modelos\lost_dogs_model2')
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
 
