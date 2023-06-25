@@ -21,7 +21,7 @@ def DogStateClasification(registro):
     print("El post es de perro perdido.")
   else:
     print("El post es de perro encontrado.")
-  registro['SePerdiรณ']= round(probs)
+  registro['SePerdio']= round(probs)
   return registro
 
 

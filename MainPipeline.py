@@ -28,11 +28,18 @@ def processPerritos (registro):
   return registro
 
 def buildPerritos(collection):
-  dogs=[]
+  lost_dogs=[]
+  found_dogs=[]
   for dog in collection:
     registro={
       'descripcion':'',
-      'imagen': dog['data']
+      'imagen': dog['data'],
+      'name': dog['name']
     }
-    dogs.append(processPerritos(registro))
-    return dogs
+    perrito=processPerritos(registro)
+    if perrito['SePerdio']==1:
+      lost_dogs.append(perrito)
+    else:
+      found_dogs.append(perrito)
+
+  return lost_dogs,found_dogs

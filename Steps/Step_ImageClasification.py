@@ -12,15 +12,16 @@ import decimal
 import numpy as np
 import tempfile
 
-new_model = tf.keras.models.load_model('D:\Mis documentos\Documents\CLASES\\tesiss\Codigo\Main Code\Helpers\Modelos\RESENTV2.h5')
+new_model = tf.keras.models.load_model('D:\Mis documentos\Documents\CLASES\\tesiss\Codigo\Main Code\Helpers\Modelos\RESENTV2_Last.h5')
 
 IMG_SIZE = 299
 INIT_LR = 1e-5
 EPOCHS = 20
 BS = 32
-class_names = ['n02086240-Shih-Tzu', 'n02086079-Pekinese', 'n02097209-standard_schnauzer', 'n02097047-miniature_schnauzer', 'n02102318-cocker_spaniel', 'n02110958-pug', 'n02088364-beagle', 'n02085620-Chihuahua', 'n02099601-golden_retriever', 'n02112018-Pomeranian', 'n02108089-boxer', 'n02110185-Siberian_husky', 'n02113624-toy_poodle', 'n02106550-Rottweiler', 'n02108915-French_bulldog', 'n02113712-miniature_poodle', 'n02107142-Doberman',
-               'n02099712-Labrador_retriever', 'n02093256-Staffordshire_bullterrier', 'n02096585-Boston_bull', 'n02097474-Tibetan_terrier', 'n02102177-Welsh_springer_spaniel', 'n02087046-toy_terrier', 'n02095314-wire-haired_fox_terrier', 'n02106166-Border_collie', 'n02089867-Walker_hound', 'n02101388-Brittany_spaniel', 'n02106662-German_shepherd', 'n02094433-Yorkshire_terrier', 'n02093428-American_Staffordshire_terrier', 'n02085936-Maltese_dog']
-
+class_names = ['n02086240-Shih-Tzu','n02086079-Pekinese','n02097209-standard_schnauzer','n02097047-miniature_schnauzer','n02102318-cocker_spaniel','n02110958-pug','n02088364-beagle','n02085620-Chihuahua','n02099601-golden_retriever',
+    'n02112018-Pomeranian','n02108089-boxer','n02110185-Siberian_husky','n02113624-toy_poodle','n02106550-Rottweiler','n02108915-French_bulldog','n02113712-miniature_poodle','n02107142-Doberman',
+    'n02099712-Labrador_retriever','n02093256-Staffordshire_bullterrier','n02096585-Boston_bull','n02097474-Tibetan_terrier','n02102177-Welsh_springer_spaniel','n02087046-toy_terrier','n02095314-wire-haired_fox_terrier','n02106166-Border_collie',
+    'n02089867-Walker_hound','n02101388-Brittany_spaniel','n02106662-German_shepherd','n02094433-Yorkshire_terrier','n02093428-American_Staffordshire_terrier','n02085936-Maltese_dog']
 
 def recognitionDog(registro):
     bit_img=Image.open(BytesIO(registro['imagen']))

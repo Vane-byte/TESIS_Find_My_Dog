@@ -4,7 +4,6 @@ import datetime
 from datetime import datetime as dt
 from datetime import date
 
-
 point_weights={'NER':0.4, 'Image':0.6, 'ACC':2, 'COL':4,'DAT':3,'DOG':5,'HRS':1,'PEL':4,'PLC':4,'RAZ':5,'SEX':3,'STT':2,'TAM':4}
 
 def obtener_porcentaje_similitud(frase1, frase2):
@@ -191,10 +190,10 @@ def CalcNERPoints (NER_registro, NER_compare):
         "grande":['grandote', 'enorme','gigante','grandesito','alto','gran']
     }
 
-    for tama?o in homologation:
-      for value in homologation[tama?o]:
-        tam1=tam1.replace(value,tama?o)
-        tam2=tam2.replace(value,tama?o)
+    for tamanio in homologation:
+      for value in homologation[tamanio]:
+        tam1=tam1.replace(value,tamanio)
+        tam2=tam2.replace(value,tamanio)
 
     calc=0
     return calc * point_weights['TAM']
@@ -257,12 +256,12 @@ def calcPuntajeRaza (razas_registro, razas_compare):
 ##########################################################################################################################################
 
 def calTotal(all_registros, main_registro):
-     updated_regs=[]
-     for dog in all_registros:
-          NER_points= CalcNERPoints(main_registro["NER"], dog["NER"])*point_weights['Image']
-          IMG_points= calcPuntajeRaza(main_registro["imagen_razas"],dog["imagen_razas"])*point_weights['Image']
-          dog['final_punctuation']=NER_points+IMG_points
-          updated_regs.append(dog)
+  updated_regs=[]
+  for dog in all_registros:
+    NER_points= CalcNERPoints(main_registro["NER"], dog["NER"])*point_weights['Image']
+    IMG_points= calcPuntajeRaza(main_registro["imagen_razas"],dog["imagen_razas"])*point_weights['Image']
+    dog['final_punctuation']=NER_points+IMG_points
+    updated_regs.append(dog)
 
-     return updated_regs
+  return updated_regs
 
