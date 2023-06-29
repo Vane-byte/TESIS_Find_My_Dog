@@ -4,7 +4,7 @@ import datetime
 from datetime import datetime as dt
 from datetime import date
 
-point_weights={'NER':0.4, 'Image':0.6, 'ACC':2, 'COL':4,'DAT':3,'DOG':5,'HRS':1,'PEL':4,'PLC':4,'RAZ':5,'SEX':3,'STT':2,'TAM':4}
+point_weights={'NER':0.4, 'Image':0.6, 'ACC':6, 'COL':12,'DAT':9,'DOG':15,'HRS':3,'PEL':12,'PLC':12,'RAZ':15,'SEX':9,'STT':6,'TAM':12}
 
 def obtener_porcentaje_similitud(frase1, frase2):
     matcher = SequenceMatcher(None, frase1, frase2)
@@ -12,104 +12,107 @@ def obtener_porcentaje_similitud(frase1, frase2):
     return porcentaje_similitud
 
 def transformDate(dat):
-  dat=dat.lower()
-  today= date.today()
-  dat= dat.replace('?','e').replace('?','a').replace('  ',' ')
-  words= dat.split(' ')
+  try:
+    dat=dat.lower()
+    today= date.today()
+    dat= dat.replace('?','e').replace('?','a').replace('  ',' ')
+    words= dat.split(' ')
 
-  numsInDate= [int(s) for s in re.findall(r'-?\d+\.?\d*', dat)]
-  homologationDays=["lunes","martes","miercoles","jueves","viernes","sabado","domingo"]
+    numsInDate= [int(s) for s in re.findall(r'-?\d+\.?\d*', dat)]
+    homologationDays=["lunes","martes","miercoles","jueves","viernes","sabado","domingo"]
 
 
-  if 'hoy' in dat:
-    dat= date.today()
+    if 'hoy' in dat:
+      dat= date.today()
 
-  elif 'ayer' in dat:
-    dat= today-datetime.timedelta(days=1)
+    elif 'ayer' in dat:
+      dat= today-datetime.timedelta(days=1)
 
-  elif 'hace' in dat:
-    dat=dat.replace('?','i')
-    if 'dia' in dat:
-      number=[1]
-      if 'dias' in dat:
-        number=[3]
+    elif 'hace' in dat:
+      dat=dat.replace('?','i')
+      if 'dia' in dat:
+        number=[1]
+        if 'dias' in dat:
+          number=[3]
+          if len(numsInDate)>0:
+            number = numsInDate
+        dat=today-datetime.timedelta(days=number[0])
+
+      elif 'semana' in dat:
+        week=7
+        number=[1]
         if len(numsInDate)>0:
           number = numsInDate
-      dat=today-datetime.timedelta(days=number[0])
-
-    elif 'semana' in dat:
-      week=7
-      number=[1]
-      if len(numsInDate)>0:
-        number = numsInDate
-      dat= today-datetime.timedelta(days=week*number[0])
-  elif ('pasado' in dat and len(numsInDate)==0) or (len(numsInDate)==0 and len(words)<=2):
-    day=0
-    for index,val in enumerate(homologationDays):
-      if val in dat:
-        day=index
-        break
-    todayDay=today.weekday() #4
-    if todayDay<day:
-      todayDay= todayDay+7
-    daysPassed= todayDay-day
-    dat= today- datetime.timedelta(days=daysPassed)
-  else:
-    dat = dat.lower().replace('.','-').replace('/','-').replace('--','-')
-    dat.strip('.')
-    if dat.count('-')==2 and len(numsInDate)==3:   #  28-02-23
-      year=numsInDate[2]
-      if year>9 and year<100:
-        year='20'+str(year)
-      dat=str(numsInDate[0])+'-'+str(numsInDate[1])+'-'+str(year)
-      dat=dt.strptime(dat, '%d-%m-%Y').date()
-
-    elif len(numsInDate)==2 and dat.count('-')==1:    #  28-02
-      newDate= str(numsInDate[0])+"-"+str(numsInDate[1])+"-"+"2023"
-      dat=dt.strptime(newDate, '%d-%m-%Y').date()
-
+        dat= today-datetime.timedelta(days=week*number[0])
+    elif ('pasado' in dat and len(numsInDate)==0) or (len(numsInDate)==0 and len(words)<=2):
+      day=0
+      for index,val in enumerate(homologationDays):
+        if val in dat:
+          day=index
+          break
+      todayDay=today.weekday() #4
+      if todayDay<day:
+        todayDay= todayDay+7
+      daysPassed= todayDay-day
+      dat= today- datetime.timedelta(days=daysPassed)
     else:
-      homologationMonths={
-          "01":['enero','ene'],
-          "02":['feb','febrero'],
-          "03":['mar','marzo'],
-          "04":['abr','abril','april'],
-          "05":['may','mayo'],
-          "06":['jun','junio'],
-          "07":['jul','julio'],
-          "08":['ago','agosto'],
-          "09":['set','sept','sep','setiembre','septiembre'],
-          "10":['oct','octubre'],
-          "11":['nov','noviembre'],
-          "12":['dec','diciembre','dic']
-      }
-
-      # 7 de enero o 7 de enero 2023
-      month= today.month
-      day= today.day
-      year= today.year
-      for monthKey in homologationMonths:
-        for monthVal in homologationMonths[monthKey]:
-          if monthVal in dat:
-            month=monthKey
-            break
-      day= numsInDate[0]
-      if len(numsInDate) ==2: #tenemos d?a y a?o
-        year= numsInDate[1]
-        if year>9 and year <100:
+      dat = dat.lower().replace('.','-').replace('/','-').replace('--','-')
+      dat.strip('.')
+      if dat.count('-')==2 and len(numsInDate)==3:   #  28-02-23
+        year=numsInDate[2]
+        if year>9 and year<100:
           year='20'+str(year)
+        dat=str(numsInDate[0])+'-'+str(numsInDate[1])+'-'+str(year)
+        dat=dt.strptime(dat, '%d-%m-%Y').date()
 
-      newDate=str(day)+'-'+str(month)+'-'+str(year)
-      dat= dt.strptime(newDate, '%d-%m-%Y').date()
-  return dat
+      elif len(numsInDate)==2 and dat.count('-')==1:    #  28-02
+        newDate= str(numsInDate[0])+"-"+str(numsInDate[1])+"-"+"2023"
+        dat=dt.strptime(newDate, '%d-%m-%Y').date()
+
+      else:
+        homologationMonths={
+            "01":['enero','ene'],
+            "02":['feb','febrero'],
+            "03":['mar','marzo'],
+            "04":['abr','abril','april'],
+            "05":['may','mayo'],
+            "06":['jun','junio'],
+            "07":['jul','julio'],
+            "08":['ago','agosto'],
+            "09":['set','sept','sep','setiembre','septiembre'],
+            "10":['oct','octubre'],
+            "11":['nov','noviembre'],
+            "12":['dec','diciembre','dic']
+        }
+
+        # 7 de enero o 7 de enero 2023
+        month= today.month
+        day= today.day
+        year= today.year
+        for monthKey in homologationMonths:
+          for monthVal in homologationMonths[monthKey]:
+            if monthVal in dat:
+              month=monthKey
+              break
+        day= numsInDate[0]
+        if len(numsInDate) ==2: #tenemos d?a y a?o
+          year= numsInDate[1]
+          if year>9 and year <100:
+            year='20'+str(year)
+
+        newDate=str(day)+'-'+str(month)+'-'+str(year)
+        dat= dt.strptime(newDate, '%d-%m-%Y').date()
+    return dat
+  except:
+    return -1
 
 def CalcNERPoints (NER_registro, NER_compare):
   points=0
 
   #ACC - placa, chip, collar
   def ACC_punctuation(acc1, acc2):
-    contains_no = acc1.contains('no') and acc2.contains('no')
-    not_contains_no = not acc1.contains('no') and not acc2.contains('no')
+    contains_no = 'no' in acc1 and 'no' in acc2
+    not_contains_no = not 'no' in acc1 and 'no' in acc2
 
     calc=0
 
@@ -140,6 +143,9 @@ def CalcNERPoints (NER_registro, NER_compare):
   def DAT_punctuation(dat1, dat2):
     dat2= dateTransformed
     dat1= transformDate(dat1)
+
+    if dat2==-1 or dat1==-1:
+      return 0
 
     daysBetween=(dat2-dat1).days
     calc=0
@@ -217,7 +223,7 @@ def CalcNERPoints (NER_registro, NER_compare):
 
   print('Puntos obtenidos en NER: ')
   for val in NER_compare:
-    if val in NER_registro:
+    if val in NER_registro and val!='TLF':
       pointsGained=NER_keys[val](NER_compare[val], NER_registro[val])
       print(val,': ',pointsGained, '')
       points= points+ pointsGained
@@ -260,6 +266,8 @@ def calTotal(all_registros, main_registro):
   for dog in all_registros:
     NER_points= CalcNERPoints(main_registro["NER"], dog["NER"])*point_weights['Image']
     IMG_points= calcPuntajeRaza(main_registro["imagen_razas"],dog["imagen_razas"])*point_weights['Image']
+    dog['NER_points']=NER_points
+    dog['IMG_points']=IMG_points
     dog['final_punctuation']=NER_points+IMG_points
     updated_regs.append(dog)
 

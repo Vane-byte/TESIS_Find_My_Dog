@@ -1,26 +1,17 @@
-
-
 from flask import Flask, request, render_template,jsonify
 from werkzeug.utils import secure_filename
 from Steps.Step_ImageClasification import predimage,recognitionDog
-from Steps.Step_NER import PredictNER
-from Steps.Step_TextClasification import DogStateClasification
-from Steps.Step_TextExtraction import ExtractTextFromImage
 
 import os
-import numpy as np
-import cv2
-import json
-import base64
 
 
 # Definimos una instancia de Flask
-app = Flask(__name__)
+app = Flask(__name__, root_path=os.getcwd())
+app.root_path = os.path.dirname(os.path.abspath(__file__))
 
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
-
 
 @app.route('/predict', methods=['GET', 'POST'])
 def upload():
@@ -32,19 +23,14 @@ def upload():
             "descripcion":'',
             "imagen": file_contents
         }
-        if  registro['descripcion']== '':
-            registro= ExtractTextFromImage(registro)
-
-        registro=DogStateClasification(registro)
-        registro=PredictNER(registro)
-        registro=recognitionDog(registro)
+        finalEvaluation(registro)
         registro.pop('imagen')
         json_str = jsonify(registro)
-
     
         return json_str
     return None
 
 if __name__ == '__main__':
+    from evalFromMongoDB import finalEvaluation
     app.run(debug=False, threaded=False)
 

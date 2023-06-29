@@ -1,11 +1,9 @@
-
 from simpletransformers.ner import NERModel
 
 #Reconocimiento de entidades (NER) del texto
 
 def PredictNER(registro):
-  
-  model_saved=NERModel("bert",r'D:\Mis documentos\Documents\CLASES\tesiss\Codigo\Main Code\Helpers\Modelos\NEROutputs\outputs', use_cuda=False)
+  model_saved=NERModel("bert",r'Helpers\Modelos\NEROutputs\outputs', use_cuda=False)
 
   predictions, raw_outputs=model_saved.predict([registro['descripcion']])
   predictions=predictions[0]
