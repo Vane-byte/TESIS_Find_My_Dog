@@ -26,7 +26,10 @@ $(document).ready(function () {
 
     // Predict
     $('#btn-predict').click(function () {
-        var form_data = new FormData($('#upload-file')[0]);
+        
+        var form_data = new FormData();
+        form_data.append('desc', $('#search_desc').val()); // Agregar el valor del input de texto
+        form_data.append('file', $('#imageUpload').prop('files')[0]);
 
         // Show loading animation
         $(this).hide();
@@ -43,6 +46,7 @@ $(document).ready(function () {
             async: true,
             success: function (data) {
                 console.log("data",data)
+                window.location.href = '/search?data=' + encodeURIComponent(data);
                 // Get and display the result
                 // $('.loader').hide();
                 // $('#result').fadeIn(600);

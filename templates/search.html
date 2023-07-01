@@ -1,0 +1,30 @@
+{% extends "Pagina.html" %} {% block content %}
+
+<h2>Resultados de perrotes</h2>
+
+<div>
+     
+    <div class="image-section" >
+        <div class="img-preview">
+            <div id="imagePreview">
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-dark" id="btn-predict">Predicci?n</button>
+        </div>
+    </div>
+
+    <div class="loader"></div>
+    <div>Clasificaci?n de perrito: {{ SePerdio }}</div>
+    <div>NER: {{ NER }}</div>
+    <div id="registro-section" >
+        <h3>Resultados:</h3>
+        <div id="descripcion-div"></div>
+        <div id="imagen-div"></div>
+        <div id="seperdio-div"></div>
+        <div id="imagen-razas-div"></div>
+    </div>
+
+</div>
+
+{% endblock %} 

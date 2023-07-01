@@ -3,6 +3,7 @@ import re
 import datetime
 from datetime import datetime as dt
 from datetime import date
+import base64
 
 point_weights={'NER':0.4, 'Image':0.6, 'ACC':6, 'COL':12,'DAT':9,'DOG':15,'HRS':3,'PEL':12,'PLC':12,'RAZ':15,'SEX':9,'STT':6,'TAM':12}
 
@@ -229,7 +230,7 @@ def CalcNERPoints (NER_registro, NER_compare):
       points= points+ pointsGained
 
 
-  return points #max 37 puntazos
+  return points
 
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -262,14 +263,16 @@ def calcPuntajeRaza (razas_registro, razas_compare):
 ##########################################################################################################################################
 
 def calTotal(all_registros, main_registro):
-  updated_regs=[]
+  final_regs=[]
   for dog in all_registros:
     NER_points= CalcNERPoints(main_registro["NER"], dog["NER"])*point_weights['Image']
     IMG_points= calcPuntajeRaza(main_registro["imagen_razas"],dog["imagen_razas"])*point_weights['Image']
-    dog['NER_points']=NER_points
-    dog['IMG_points']=IMG_points
-    dog['final_punctuation']=NER_points+IMG_points
-    updated_regs.append(dog)
+    reg={'NER_points':NER_points, 'IMG_points':IMG_points,'name':dog['name'], 'id':dog['_id'], 'imagen': get_image_base64(dog['imagen'])}
+    final_regs.append(reg)
 
-  return updated_regs
+  return final_regs
 
+def get_image_base64(binary_code):
+    # Convert binary code to base64 encoding
+    base64_data = base64.b64encode(binary_code).decode('utf-8')
+    return f"data:image/jpeg;base64,{base64_data}"

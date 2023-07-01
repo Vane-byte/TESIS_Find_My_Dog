@@ -1,6 +1,4 @@
 from flask import Flask, request, render_template,jsonify
-from werkzeug.utils import secure_filename
-from Steps.Step_ImageClasification import predimage,recognitionDog
 
 import os
 
@@ -16,19 +14,32 @@ def index():
 @app.route('/predict', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
+        desc = request.form.get('desc')
+        file = request.files['file']
 
-        f = request.files['file']
-        file_contents = f.read()
+        file_contents = file.read()
         registro={
-            "descripcion":'',
+            "descripcion":desc,
             "imagen": file_contents
         }
-        finalEvaluation(registro)
-        registro.pop('imagen')
-        json_str = jsonify(registro)
-    
-        return json_str
+        det, res=finalEvaluation(registro)
+        data={
+            'SePerdio': det['SePerdio'],
+            'NER':det['NER'],
+            'Razas': det['imagen_razas'],
+            'Resultados': list(res)
+        }
+     
+        return render_template('search.html', objects=res, SePerdio=det['SePerdio'], NER=det['NER'], Razas=det['imagen_razas'])
     return None
+
+
+@app.route('/search')
+def result():
+    # Retrieve the processed data from the query parameters
+    processed_data = request.args.get('data')
+    # Render the result HTML template and pass the processed data to it
+    return processed_data
 
 if __name__ == '__main__':
     from evalFromMongoDB import finalEvaluation
