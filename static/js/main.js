@@ -45,7 +45,6 @@ $(document).ready(function () {
             processData: false,
             async: true,
             success: function (data) {
-                console.log("data",data)
                 window.location.href = '/search?data=' + encodeURIComponent(data);
                 // Get and display the result
                 // $('.loader').hide();

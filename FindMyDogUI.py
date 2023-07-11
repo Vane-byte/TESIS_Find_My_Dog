@@ -1,10 +1,13 @@
-from flask import Flask, request, render_template,jsonify
+import base64
+from flask import Flask, request, render_template,send_from_directory
+
 
 import os
 
 
 # Definimos una instancia de Flask
 app = Flask(__name__, root_path=os.getcwd())
+
 app.root_path = os.path.dirname(os.path.abspath(__file__))
 
 @app.route('/', methods=['GET'])
@@ -23,22 +26,21 @@ def upload():
             "imagen": file_contents
         }
         det, res=finalEvaluation(registro)
-        data={
-            'SePerdio': det['SePerdio'],
-            'NER':det['NER'],
-            'Razas': det['imagen_razas'],
-            'Resultados': list(res)
-        }
-     
-        return render_template('search.html', objects=res, SePerdio=det['SePerdio'], NER=det['NER'], Razas=det['imagen_razas'])
+    
+        return render_template('search.html', 
+            objects=res, 
+            SePerdio=det['SePerdio'], 
+            NER=det['NER'], 
+            Razas=det['imagen_razas'])
     return None
 
 
-@app.route('/search')
+@app.route('/search', methods=['GET'])
 def result():
     # Retrieve the processed data from the query parameters
     processed_data = request.args.get('data')
     # Render the result HTML template and pass the processed data to it
+
     return processed_data
 
 if __name__ == '__main__':

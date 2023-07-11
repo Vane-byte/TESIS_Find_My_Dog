@@ -4,6 +4,7 @@ import datetime
 from datetime import datetime as dt
 from datetime import date
 import base64
+from werkzeug.utils import secure_filename
 
 point_weights={'NER':0.4, 'Image':0.6, 'ACC':6, 'COL':12,'DAT':9,'DOG':15,'HRS':3,'PEL':12,'PLC':12,'RAZ':15,'SEX':9,'STT':6,'TAM':12}
 
@@ -267,12 +268,14 @@ def calTotal(all_registros, main_registro):
   for dog in all_registros:
     NER_points= CalcNERPoints(main_registro["NER"], dog["NER"])*point_weights['Image']
     IMG_points= calcPuntajeRaza(main_registro["imagen_razas"],dog["imagen_razas"])*point_weights['Image']
-    reg={'NER_points':NER_points, 'IMG_points':IMG_points,'name':dog['name'], 'id':dog['_id'], 'imagen': get_image_base64(dog['imagen'])}
+    saveImage(dog['imagen'], dog['name'])
+    reg={'NER_points':NER_points, 'IMG_points':IMG_points,'name':dog['name'], 'id':dog['_id']}
     final_regs.append(reg)
 
   return final_regs
 
-def get_image_base64(binary_code):
-    # Convert binary code to base64 encoding
-    base64_data = base64.b64encode(binary_code).decode('utf-8')
-    return f"data:image/jpeg;base64,{base64_data}"
+def saveImage(image_data, name):
+  upload= "static\images\\"
+
+  with open(upload+name, 'wb') as file:
+    file.write(image_data)
