@@ -19,8 +19,10 @@ def upload():
     if request.method == 'POST':
         desc = request.form.get('desc')
         file = request.files['file']
-
         file_contents = file.read()
+        with open('static\images\photo_search.png', 'wb') as newFile:
+            newFile.write(file_contents)
+        
         registro={
             "descripcion":desc,
             "imagen": file_contents
@@ -31,7 +33,8 @@ def upload():
             objects=res, 
             SePerdio=det['SePerdio'], 
             NER=det['NER'], 
-            Razas=det['imagen_razas'])
+            Razas=det['imagen_razas'],
+            Desc=det['descripcion'])
     return None
 
 

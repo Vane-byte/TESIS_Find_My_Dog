@@ -1,17 +1,43 @@
 {% extends "Pagina.html" %} {% block content %}
-<h2>Resultados de perrotes</h2>
+<h2>Resultados</h2>
 
 <div>
-    <div>Clasificaci?n de perrito: {{ SePerdio }}</div>
-    <div>NER: {{ NER }}</div>
+  <div style="height: 240px; display: flex;">
+    <div style="width: 280px; margin-right: 15px;">
+      <img style="max-width: 230px; max-height: 150px; width: 100%; height: 100%; object-fit: contain;" src="{{ url_for('static', filename='/images/photo_search.png') }}">
+      <p style="font-size: 13px;">{{ Desc }}</p>
+    </div>
+    <div>
+      <div style="display: flex;">
+        <div style="width: 40%;">{{ SePerdio }}</div>
+        <div style="width: 60%; font-size: 15px;">
+          <p style="margin: 0px;">NER: </p>
+          {% for key in NER %}
+          <p style="margin: 0px; padding-left: 15px;"> {{key}}: {{ NER[key] }}</p>
+          {% endfor %}
+        </div>
+      </div>
+      <div> {{ Razas }}</div>
+    </div>
+  </div>  
     <div id="registro-section" >
         <h3>Resultados:</h3>
-        {% for item in objects %}
-          <div>
-               <p>{{ item.name }}</p>
-               <img src="{{ url_for('static', filename='/images/'+ item.name) }}">
-          </div>
-        {% endfor %}
+        <div style="display: flex; flex-wrap: wrap; font-size: 13px;">
+          {% for item in objects %}
+            <div style="width: 30%; height: 350px; ">
+              <div style="display: flex; max-height: 40%;">
+                <img src="{{ url_for('static', filename='/images/'+ item.name) }}" style="max-height: 40%; max-width: 40%; object-fit: contain;">
+                <div>
+                  <p>NER: {{ item.NER_points }}</p>
+                  <p>{{ item.NER }}</p>
+                </div>
+              </div>
+              <p>Razas: {{ item.IMG_points }}</p>
+              <p>{{ item.Razas }}</p>
+              <p>Total: {{  item.Total }}</p>
+            </div>
+          {% endfor %}
+      </div>
     </div>
 
 </div>

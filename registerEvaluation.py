@@ -266,10 +266,18 @@ def calcPuntajeRaza (razas_registro, razas_compare):
 def calTotal(all_registros, main_registro):
   final_regs=[]
   for dog in all_registros:
-    NER_points= CalcNERPoints(main_registro["NER"], dog["NER"])*point_weights['Image']
+    NER_points= CalcNERPoints(main_registro["NER"], dog["NER"])*point_weights['NER']
     IMG_points= calcPuntajeRaza(main_registro["imagen_razas"],dog["imagen_razas"])*point_weights['Image']
     saveImage(dog['imagen'], dog['name'])
-    reg={'NER_points':NER_points, 'IMG_points':IMG_points,'name':dog['name'], 'id':dog['_id']}
+    reg={
+      'NER': dog['NER'],
+      'NER_points':NER_points, 
+      'Razas': dog['imagen_razas'],
+      'IMG_points':IMG_points,
+      'Total':NER_points+IMG_points, 
+      'name':dog['name'], 
+      'descripcion': dog['descripcion']
+    }
     final_regs.append(reg)
 
   return final_regs
