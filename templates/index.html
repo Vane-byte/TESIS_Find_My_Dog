@@ -1,27 +1,31 @@
 {% extends "Pagina.html" %} {% block content %}
 
-<h2>Clasificador de Imágenes</h2>
+<h1 class="title">Find My Dog UI</h1>
 
 <div>
-    <form id="upload-file" method="post" enctype="multipart/form-data">
-        <label>
-            Descripción de mascota
-        </label>
-        <input type="text" name="search_desc" id="search_desc"> 
+    <form class="form-inline" id="upload-file" method="post" enctype="multipart/form-data">
+        <div class="form-group mb-2">
+            <label>
+                Descripción de mascota
+            </label>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <input class="form-control" type="text" name="search_desc" id="search_desc"> 
+            
+            <input type="file" name="file" id="imageUpload" accept=".png, .jpg, .jpeg">
+        </div>
         <label for="imageUpload" class="upload-label">
             Elegir Imagen
         </label>
-        <input type="file" name="file" id="imageUpload" accept=".png, .jpg, .jpeg">
     </form>
 
     <div class="image-section" style="display:none;">
         <div class="img-preview">
             <div id="imagePreview">
             </div>
+            <button type="button" class="btn btn-dark botones overButton" id="btn-predict">Predicción</button>
         </div>
-        <div>
-            <button type="button" class="btn btn-dark" id="btn-predict">Predicción</button>
-        </div>
+        
     </div>
 
     <div class="loader" style="display:none;"></div>
