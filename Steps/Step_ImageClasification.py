@@ -40,7 +40,7 @@ def recognitionDog(registro):
             crop = img[r[1]:r[3], r[0]:r[2]]
             if i == 0:
                 _, buffer = cv2.imencode('.png', crop)
-                registro['imagen']=buffer.tobytes()
+                registro['imagenRecortada']=buffer.tobytes()
                 print("----------------------")
                 print("dog recognition finish")
                 print("----------------------")
@@ -49,7 +49,7 @@ def recognitionDog(registro):
 
 
 def predimage(registro):
-    image=Image.open(BytesIO(registro['imagen']))
+    image=Image.open(BytesIO(registro['imagenRecortada']))
     test = image.resize((299, 299))
     test = img_to_array(test)
     test = np.expand_dims(test, axis=0)

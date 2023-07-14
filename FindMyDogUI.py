@@ -1,7 +1,7 @@
 import base64
-from flask import Flask, request, render_template,send_from_directory
+from flask import Flask, request, render_template,jsonify
 
-
+import json
 import os
 
 
@@ -29,7 +29,7 @@ def upload():
         }
         det, res=finalEvaluation(registro)
     
-        return render_template('search.html', 
+        return jsonify(
             objects=res, 
             SePerdio=det['SePerdio'], 
             NER=det['NER'], 
@@ -41,10 +41,21 @@ def upload():
 @app.route('/search', methods=['GET'])
 def result():
     # Retrieve the processed data from the query parameters
-    processed_data = request.args.get('data')
     # Render the result HTML template and pass the processed data to it
+    processed_data = json.loads(request.args.get('data'))
+    print("PPPPPPPPPPPPPPPP: " ,processed_data)
+    res=processed_data["objects"]
+    SePerdio=processed_data["SePerdio"]
+    NER=processed_data["NER"]
+    Razas=processed_data["Razas"]
+    Desc=processed_data["Desc"]
 
-    return processed_data
+    return render_template('search.html',
+            objects=res, 
+            SePerdio=SePerdio, 
+            NER=NER, 
+            Razas=Razas,
+            Desc=Desc)
 
 if __name__ == '__main__':
     from evalFromMongoDB import finalEvaluation

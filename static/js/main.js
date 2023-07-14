@@ -45,12 +45,8 @@ $(document).ready(function () {
             processData: false,
             async: true,
             success: function (data) {
-                window.location.href = '/search?data=' + encodeURIComponent(data);
-                // Get and display the result
-                // $('.loader').hide();
-                // $('#result').fadeIn(600);
-                // $('#result').text(' Resultado:  ' + data);
-                // console.log('Success!');
+                
+                window.location.href = '/search?data=' + encodeURIComponent(JSON.stringify(data));
             },
         });
     });
