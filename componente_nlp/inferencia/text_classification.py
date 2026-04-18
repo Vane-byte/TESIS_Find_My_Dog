@@ -1,10 +1,10 @@
 import tensorflow as tf
 from transformers import BertTokenizer
 
-import config
+from componente_nlp import settings
 
 # Clasificación de texto (perdido / encontrado)
-model_text_classy = tf.keras.models.load_model(str(config.MODEL_TEXT_CLASSIFICATION_DIR))
+model_text_classy = tf.keras.models.load_model(str(settings.MODEL_TEXT_CLASSIFICATION_DIR))
 
 tokenizer = BertTokenizer.from_pretrained("bert-base-multilingual-cased")
 

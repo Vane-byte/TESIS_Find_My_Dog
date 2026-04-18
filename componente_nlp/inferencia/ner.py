@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import config
+from componente_nlp import settings
 
 _ner_model = None
 
@@ -10,7 +10,7 @@ def _get_ner_model():
     if _ner_model is None:
         from simpletransformers.ner import NERModel
 
-        _ner_model = NERModel("bert", str(config.MODEL_NER_DIR), use_cuda=False)
+        _ner_model = NERModel("bert", str(settings.MODEL_NER_DIR), use_cuda=False)
     return _ner_model
 
 
