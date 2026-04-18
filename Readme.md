@@ -24,11 +24,29 @@ Los tres bloques conviven en un solo repositorio solo por **organización del pr
 |---------|-----|
 | `componente_web/` | Flask (`app.py`), plantillas, estáticos, pipeline de evaluación (`main_pipeline.py`), puntuación (`evaluation/`), scripts Mongo (`scripts/`). |
 | `componente_nlp/inferencia/` | Clasificación de texto, NER y OCR usados por el pipeline web. |
-| `componente_nlp/entrenamiento/` | Reservado para notebooks/scripts de entrenamiento NLP. |
+| `componente_nlp/entrenamiento/` | Notebooks de entrenamiento NLP; scripts CLI equivalentes en `entrenamiento/scripts/` (`01_test_api.py` … `07_ner_train.py`, ver `--help`). |
 | `componente_vision/inferencia/` | Detección/clasificación de raza usada por el pipeline web. |
 | `componente_vision/entrenamiento/` | Reservado para entrenamiento de modelos de visión. |
 | `Helpers/Modelos/` | Artefactos exportados (rutas configurables en `.env`). |
-| `config.py` | Carga `.env` y expone URI MongoDB, colecciones y rutas a modelos. |
+| `config.py` | MongoDB, colecciones y glob de importación (solo lo que usa el web / scripts de datos). |
+| `componente_nlp/settings.py` | Rutas a modelos NLP (mismas variables `MODEL_*` en `.env`). |
+| `componente_vision/settings.py` | Rutas a modelos de visión (`MODEL_BREED_*`, `MODEL_YOLO_*`). |
+
+## Ejecución por separado (entornos y configuración)
+
+Hoy el **pipeline completo** sigue viviendo en un solo proceso Python cuando levantas la web: `main_pipeline` llama a inferencia NLP y visión **en memoria**. Para acercarte a componentes realmente independientes puedes:
+
+1. **Tres entornos virtuales** — instala solo lo necesario en cada uno:
+   - `pip install -r requirements-web.txt`
+   - `pip install -r requirements-nlp.txt`
+   - `pip install -r requirements-vision.txt`  
+   La demo integrada en Flask **necesita** hoy las tres familias de dependencias en el mismo intérprete que ejecuta `run_web.py`, salvo que sustituyas el pipeline por llamadas HTTP (siguiente paso arquitectónico).
+
+2. **Config partida** — `config.py` ya no define rutas de modelos; NLP y visión leen `componente_nlp/settings.py` y `componente_vision/settings.py` (siguen usando el mismo `.env` en la raíz del repo con `REPO_ROOT`).
+
+3. **Imports perezosos** — `main_pipeline.py` importa NLP/visión solo al ejecutar `processPerritos`, no al importar el módulo del web.
+
+4. **Siguiente paso si quieres procesos distintos** — exponer inferencia como **APIs** (p. ej. FastAPI) en `componente_nlp` y `componente_vision`, y en el web reemplazar las llamadas locales por `requests` hacia URLs en `.env` (`NLP_SERVICE_URL`, `VISION_SERVICE_URL`). Así cada servicio corre en su contenedor o máquina con su propio `requirements-*`.
 
 ## Configuración y ejecución (desde la raíz del repo)
 

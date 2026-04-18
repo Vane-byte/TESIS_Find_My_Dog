@@ -1,6 +1,7 @@
 """
-Configuración compartida: carga `.env` en la raíz del repositorio y expone URI de MongoDB,
-nombres de colección y rutas a artefactos de modelos (relativas al proyecto).
+Configuración del componente web y datos: MongoDB, colecciones, rutas de importación.
+Las rutas de modelos NLP y visión están en `componente_nlp/settings.py` y
+`componente_vision/settings.py`.
 """
 from __future__ import annotations
 
@@ -28,15 +29,5 @@ MONGO_COLLECTION_HOT_FOUND = os.getenv("MONGO_COLLECTION_HOT_FOUND", "Hot_Dogs_F
 
 RAW_DOGS_GLOB = os.getenv("RAW_DOGS_GLOB", "uploads/*").strip()
 
-
-def _model_path(env_key: str, default_relative: str) -> Path:
-    rel = os.getenv(env_key, default_relative).strip()
-    return (PROJECT_ROOT / rel).resolve()
-
-
-MODEL_TEXT_CLASSIFICATION_DIR = _model_path(
-    "MODEL_TEXT_CLASSIFICATION_DIR", "Helpers/Modelos/lost_dogs_model2"
-)
-MODEL_NER_DIR = _model_path("MODEL_NER_DIR", "Helpers/Modelos/NEROutputs/outputs")
-MODEL_BREED_KERAS_PATH = _model_path("MODEL_BREED_KERAS_PATH", "Helpers/Modelos/RESENTV2.h5")
-MODEL_YOLO_WEIGHTS_PATH = _model_path("MODEL_YOLO_WEIGHTS_PATH", "Helpers/Modelos/yolov8n.pt")
+# Rutas a modelos NLP y visión: ver `componente_nlp/settings.py` y `componente_vision/settings.py`
+# (así cada componente puede ejecutarse con su propio entorno sin importar `config`).
