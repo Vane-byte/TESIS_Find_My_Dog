@@ -8,3 +8,4 @@ __pycache__/
 *.log
 .pytest_cache/
 .mypy_cache/
+componente_nlp/entrenamiento/data/

@@ -8,9 +8,9 @@ from PIL import Image
 from tensorflow.keras.preprocessing.image import img_to_array
 from ultralytics import YOLO
 
-import config
+from componente_vision import settings
 
-new_model = tf.keras.models.load_model(str(config.MODEL_BREED_KERAS_PATH))
+new_model = tf.keras.models.load_model(str(settings.MODEL_BREED_KERAS_PATH))
 
 IMG_SIZE = 299
 INIT_LR = 1e-5
@@ -56,7 +56,7 @@ _yolo_model = None
 def _get_yolo():
     global _yolo_model
     if _yolo_model is None:
-        _yolo_model = YOLO(str(config.MODEL_YOLO_WEIGHTS_PATH))
+        _yolo_model = YOLO(str(settings.MODEL_YOLO_WEIGHTS_PATH))
     return _yolo_model
 
 
