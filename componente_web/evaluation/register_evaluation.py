@@ -4,6 +4,8 @@ import datetime
 from datetime import datetime as dt
 from datetime import date
 import base64
+from pathlib import Path
+
 from werkzeug.utils import secure_filename
 
 point_weights={'NER':0.4, 'Image':0.6, 'ACC':6, 'COL':12,'DAT':9,'DOG':15,'HRS':3,'PEL':12,'PLC':12,'RAZ':15,'SEX':9,'STT':6,'TAM':12}
@@ -282,8 +284,11 @@ def calTotal(all_registros, main_registro):
 
   return final_regs
 
-def saveImage(image_data, name):
-  upload= "static\images\\"
+_STATIC_IMAGES = Path(__file__).resolve().parent.parent / "static" / "images"
 
-  with open(upload+name, 'wb') as file:
-    file.write(image_data)
+
+def saveImage(image_data, name):
+    _STATIC_IMAGES.mkdir(parents=True, exist_ok=True)
+    dest = _STATIC_IMAGES / name
+    with open(dest, "wb") as file:
+        file.write(image_data)
