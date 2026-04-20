@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Entrena el modelo de clasificación de texto (BERT + cabeza densa, Keras SavedModel).
+
 Equivalente a: componente_nlp/entrenamiento/5ModelCreation.ipynb
 
-BERT multilingual + cabeza densa; entrena y guarda modelo Keras (SavedModel).
+El otro modelo NLP del repo es el NER; para entrenarlo usa `08_ner_train.py`
+(después de preparar datos con `07_ner_export_tokens.py` y anotar).
 """
 from __future__ import annotations
 
@@ -29,7 +32,9 @@ def build_model(seq_len: int = 512):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Entrena clasificación de texto (SavedModel). Ver también 08_ner_train.py para NER."
+    )
     parser.add_argument(
         "--dataset-dir",
         type=Path,
@@ -74,7 +79,7 @@ def main():
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     model.save(str(args.output))
-    print(f"Modelo guardado en: {args.output}")
+    print(f"Modelo de clasificación guardado en: {args.output}")
 
 
 if __name__ == "__main__":

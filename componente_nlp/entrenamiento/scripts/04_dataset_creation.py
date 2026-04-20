@@ -8,6 +8,7 @@ Construye tf.data.Dataset desde los .npy, shuffle/batch y guarda train/val en di
 from __future__ import annotations
 
 import argparse
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -40,6 +41,11 @@ def main():
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--shuffle-buffer", type=int, default=100)
     parser.add_argument("--train-fraction", type=float, default=0.9)
+    parser.add_argument(
+        "--no-clean",
+        action="store_true",
+        help="No borrar train/ y val/ antes de guardar (por defecto se vacían para evitar shards viejos).",
+    )
     args = parser.parse_args()
 
     d = args.npy_dir
@@ -64,7 +70,13 @@ def main():
 
     train_path = args.out_dir / "train"
     val_path = args.out_dir / "val"
-    train_path.parent.mkdir(parents=True, exist_ok=True)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    if not args.no_clean:
+        for p in (train_path, val_path):
+            if p.exists():
+                print(f"[04] Eliminando salida anterior: {p}")
+                shutil.rmtree(p)
 
     train_ds.save(str(train_path))
     val_ds.save(str(val_path))

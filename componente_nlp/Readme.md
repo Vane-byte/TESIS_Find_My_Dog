@@ -46,14 +46,21 @@ cd ruta/al/TESIS_Find_My_Dog
 python componente_nlp/entrenamiento/scripts/NOMBRE_SCRIPT.py --help
 ```
 
+### Dos modelos NLP (scripts distintos)
+
+| Modelo | Scripts |
+|--------|---------|
+| **Clasificación de texto** (BERT + Keras, SavedModel) | `01` → `06` en la tabla siguiente; el entrenamiento es `05_text_classification_train.py`. |
+| **NER** (BERT + simpletransformers) | `07_ner_export_tokens.py` (tokens sin tag) → anotar → `08_ner_train.py`. |
+
 ### Orden típico del pipeline (clasificación de texto)
 
 1. `01_test_api.py` — descarga tweets (opcional).  
 2. `02_data_cleaning_main.py` — limpia CSV.  
 3. `03_data_preprocessing.py` — Excel etiquetado → `.npy`.  
 4. `04_dataset_creation.py` — `.npy` → `tf.data` train/val.  
-5. `05_model_creation.py` — entrena y guarda SavedModel.  
-6. `06_load_and_predict.py` — prueba el modelo (texto o CSV).
+5. `05_text_classification_train.py` — entrena y guarda SavedModel.  
+6. `06_load_and_predict.py` — prueba el modelo de clasificación (texto o CSV).
 
 Ejecuta **uno a la vez**; cuando termine, el siguiente.
 
@@ -116,6 +123,7 @@ python componente_nlp/entrenamiento/scripts/03_data_preprocessing.py --input ent
 | `--batch-size` | No | `16` |
 | `--shuffle-buffer` | No | `100` |
 | `--train-fraction` | No | `0.9` |
+| `--no-clean` | No | Si **no** lo pasas, se borran `train/` y `val/` antes de guardar (evita mezclar shards viejos de TensorFlow con correlativos nuevos). |
 
 ```bash
 python componente_nlp/entrenamiento/scripts/04_dataset_creation.py
@@ -123,7 +131,9 @@ python componente_nlp/entrenamiento/scripts/04_dataset_creation.py
 
 ---
 
-### `05_model_creation.py`
+### `05_text_classification_train.py`
+
+Entrena el **modelo de clasificación de texto** (no NER; para NER usa `08_ner_train.py`).
 
 | Parámetro | ¿Obligatorio? | Default |
 |-----------|----------------|---------|
@@ -132,7 +142,7 @@ python componente_nlp/entrenamiento/scripts/04_dataset_creation.py
 | `--batch-size`, `--epochs`, `--learning-rate`, `--seq-len` | No | Ver `--help` |
 
 ```bash
-python componente_nlp/entrenamiento/scripts/05_model_creation.py --epochs 6
+python componente_nlp/entrenamiento/scripts/05_text_classification_train.py --epochs 6
 ```
 
 ---
@@ -154,34 +164,37 @@ python componente_nlp/entrenamiento/scripts/06_load_and_predict.py --csv entrena
 
 ---
 
-### `07_ner_train.py` (subcomandos)
+### `07_ner_export_tokens.py`
 
-Debes indicar **un subcomando**: `export-tokens` o `train`.
-
-**`export-tokens`** — tokeniza textos con spaCy (sin etiquetas NER).
+Tokeniza textos con spaCy y genera un Excel **sin** etiquetas NER (`row`, `text`). Útil como base antes de anotar `tag`.
 
 | Parámetro | ¿Obligatorio? | Default |
 |-----------|----------------|---------|
-| `--input-excel` | **Sí** | — |
+| `--input-excel` | No | `entrenamiento/data/2_clean/complete_clean_data.xlsx` |
 | `--output` | No | `entrenamiento/data/2_clean/ner/tokens_sin_tag.xlsx` |
 | `--spacy-model` | No | `es_core_news_sm` |
 
 ```bash
-python componente_nlp/entrenamiento/scripts/07_ner_train.py export-tokens --input-excel entrenamiento/data/2_clean/complete_clean_data.xlsx
+python componente_nlp/entrenamiento/scripts/07_ner_export_tokens.py
 ```
 
-**`train`** — entrena NER con simpletransformers.
+---
+
+### `08_ner_train.py`
+
+Entrena NER con simpletransformers a partir de un Excel **ya etiquetado** (columnas `(row, words, labels)` o `(row, text, tag)`).
 
 | Parámetro | ¿Obligatorio? | Default / notas |
 |-----------|----------------|-----------------|
-| `--train-excel` | **Sí** | Excel con columnas `(row, words, labels)` o `(row, text, tag)`. |
+| `--train-excel` | No | `entrenamiento/data/2_clean/ner/tagged_data.xlsx` |
 | `--max-rows` | No | Limita filas (útil para pruebas). |
 | `--test-size`, `--seed`, `--epochs`, `--lr`, `--batch-size` | No | Ver `--help`. |
 | `--use-cuda` | No | Flag; sin él usa CPU. |
-| `--output-dir` | No | `entrenamiento/artifacts/ner_output` |
+| `--output-dir` | No | `Helpers/Modelos/NEROutputs/outputs` (raíz del repo; alineado con inferencia). |
 
 ```bash
-python componente_nlp/entrenamiento/scripts/07_ner_train.py train --train-excel ruta/al/archivo_etiquetado.xlsx
+python componente_nlp/entrenamiento/scripts/08_ner_train.py
+python componente_nlp/entrenamiento/scripts/08_ner_train.py --train-excel ruta/al/archivo_etiquetado.xlsx
 ```
 
 ---
